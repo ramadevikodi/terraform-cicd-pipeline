@@ -4,7 +4,7 @@ pipeline {
 
       stage ('Checkout SCM'){
         steps {
-          checkout([$class: 'GitSCM', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git', url: 'https://github.com/ramadevikodi/terraform.git']]])
+          checkout([$class: 'Github', branches: [[name: '*/main']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: 'git', url: 'https://github.com/ramadevikodi/terraform.git']]])
         }
       }
 
@@ -23,7 +23,7 @@ pipeline {
            dir ("terraform") {
                 script {
                     withAWS(roleAccount:'127214170915', role:'jenkins-role', useNode: true) {
-                    sh 'terraform init -no-color'
+                    sh 'terraform $action'
                     }
              }
            }
@@ -37,7 +37,7 @@ pipeline {
             
                script {
                     withAWS(roleAccount:'127214170915', role:'jenkins-role', useNode: true) {
-                    sh 'terraform plan -no-color -out=plan.out'
+                    sh 'terraform $action -out=plan.out'
                     }
                }
             }
@@ -58,8 +58,21 @@ pipeline {
             
               script {
                     withAWS(roleAccount:'127214170915', role:'jenkins-role', useNode: true) {
-                    sh 'terraform apply -no-color -auto-approve plan.out'
+                    sh 'terraform $action -auto-approve plan.out'
                     sh "terraform output"
+                    }
+              }
+            
+           }
+	         stage('terraform Apply') {
+ 
+       steps {
+           dir ("terraform") {
+            
+              script {
+                    withAWS(roleAccount:'127214170915', role:'jenkins-role', useNode: true) {
+                    sh 'terraform $action -auto-approve'
+                
                     }
               }
             
