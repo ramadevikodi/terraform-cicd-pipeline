@@ -67,7 +67,7 @@ pipeline {
        }
   }
 	    
-stage('terraform Apply') {
+stage('terraform destroy') {
  
        steps {
            dir ("terraform") {
