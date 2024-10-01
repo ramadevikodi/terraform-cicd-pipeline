@@ -64,7 +64,10 @@ pipeline {
               }
             
            }
-	         stage('terraform Apply') {
+       }
+  }
+	    
+stage('terraform Apply') {
  
        steps {
            dir ("terraform") {
